@@ -1,0 +1,23 @@
+version: '3'
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - CLUSTER_NODES=
+      - SERVICE_5672_NAME=rabbitmq
+      - SERVICE_15672_NAME=rabbitmq-admin
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=example
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=exampledb
+
+
