@@ -13,9 +13,12 @@ version := "1.0"
 // You can define other libraries as dependencies in your build like this:
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "2.0.0",
-  "com.lightbend.akka" %% "akka-stream-alpakka-amqp" % "1.1.2",
   "org.slf4j" % "slf4j-api" % "1.7.5",
-  "org.slf4j" % "slf4j-simple" % "1.7.5"
+  "org.slf4j" % "slf4j-simple" % "1.7.5",
+  "org.json4s" %% "json4s-native" % "3.6.7",
+  "com.typesafe" % "config" % "1.4.0",
+  "com.lightbend.akka" %% "akka-stream-alpakka-amqp" % "1.1.2",
+  "com.lightbend.akka" %% "akka-stream-alpakka-slick" % "1.1.2"
 )
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 
