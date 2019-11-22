@@ -5,14 +5,13 @@ import akka.stream.alpakka.amqp.scaladsl.AmqpSource
 import akka.stream.alpakka.amqp.{AmqpLocalConnectionProvider, NamedQueueSourceSettings, QueueDeclaration, ReadResult}
 import akka.stream.alpakka.slick.javadsl.SlickSession
 import akka.stream.alpakka.slick.scaladsl.Slick
-import akka.stream.scaladsl.{Sink, Source}
+import akka.stream.scaladsl.Source
 import models.CustomerCreated
 import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
 import org.json4s.native.Serialization.read
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object Main extends App {
 
@@ -41,22 +40,13 @@ object Main extends App {
     )
 
   import session.profile.api._
+
   val result =
     queueSource
       .take(bufferSize)
       .map({ x ⇒ read[CustomerCreated](x.bytes.utf8String) })
-      .alsoTo(Sink.foreach { x ⇒ println(s"Received message: $x") })
+      .log("Received message", x ⇒ println(x))
       .runWith(
-        Slick.sink(customer ⇒ sqlu"INSERT INTO customers (id, name, email) VALUES ${customer.id}, ${customer.name}, ${customer.email} ")
+        Slick.sink({ x ⇒ sqlu"INSERT INTO customers VALUES(${x.id}, ${x.name}, ${x.email})" })
       )
-
-
-
-//email  result.map({ customers ⇒
-//    Source(customers)
-//      .runWith(
-//        Slick.sink(customer ⇒ sqlu"INSERT INTO customers (id, name, email) VALUES ${customer.id}, ${customer.name}, ${customer.email} ")
-//      )
-//  })
-
 }
