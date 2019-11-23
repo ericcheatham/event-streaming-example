@@ -13,7 +13,9 @@ import org.json4s.native.Serialization.read
 import org.slf4j.LoggerFactory
 
 
-object Main extends App {
+object Main extends App with DatabaseMigration {
+
+  migrate()
 
   implicit val system: ActorSystem = ActorSystem("SimpleQueueExample")
   system.registerOnTermination(session.close())
