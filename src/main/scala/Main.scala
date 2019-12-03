@@ -25,19 +25,18 @@ object Main extends App with DatabaseMigration {
 
   // Create the queue to publish to
   val bufferSize = 10
-  val queueName = "amqp-conn-it-test-simple-queue-example"
+  val queueName = "amqp-test-queue-example"
   val queueDeclaration = QueueDeclaration(queueName)
 
   val connectionProvider = AmqpLocalConnectionProvider
 
   import session.profile.api._
 
-  val result =
-    MessageQueue.createQueue(connectionProvider, queueName, queueDeclaration, bufferSize)
-      .take(bufferSize)
-      .map({ x => read[CustomerCreated](x.bytes.utf8String) })
-      .log("Received message", x ⇒ println(x))
-      .runWith(
-        Slick.sink({ x ⇒ sqlu"INSERT INTO customers (name, email) VALUES(${x.name}, ${x.email})" })
-      )
+  MessageQueue.createQueue(connectionProvider, queueName, queueDeclaration, bufferSize)
+    .take(bufferSize)
+    .map({ x => read[CustomerCreated](x.bytes.utf8String) })
+    .log("Received message", x ⇒ println(x))
+    .runWith(
+      Slick.sink({ x ⇒ sqlu"INSERT INTO customers (name, email) VALUES(${x.name}, ${x.email})" })
+    )
 }
